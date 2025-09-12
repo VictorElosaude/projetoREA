@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard REA - Ouvidoria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='icone.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="date-filter card">
+            <h2>Filtro de Período</h2>
+            <form action="{{ url_for('dashboard') }}" method="get">
+                <label for="start_date">Data de Início:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date if start_date else '' }}">
+                <label for="end_date">Data de Fim:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date if end_date else '' }}">
+                <button type="submit">Filtrar</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Resumo Geral</h2>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <h3>Total de Manifestações Próprias</h3>
+                    <p>{{ relatorio['quantitativo_manifestacoes_proprias'] }}</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Tempo Médio de Resposta (TMRO)</h3>
+                    <p>{{ relatorio['tmro'] }} dias</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Dentro do Prazo (PRDP)</h3>
+                    <p>{{ relatorio['prdp'] }}%</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Dentro do Prazo Pactuado (PRDPP)</h3>
+                    <p>{{ relatorio['prdpp'] }}%</p>
+                </div>
+                <div class="metric-item">
+                    <h3>Fora do Prazo (PRFP)</h3>
+                    <p>{{ relatorio['prfp'] }}%</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Gráficos de Distribuição</h2>
+            <div class="chart-section">
+                <div class="graph-card">
+                    {{ div_tipos | safe }}
+                </div>
+                <div class="graph-card">
+                    {{ div_canais | safe }}
+                </div>
+                <div class="graph-card">
+                    {{ div_temas | safe }}
+                </div>
+                <div class="graph-card">
+                    {{ div_vinculo | safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <a href="{{ url_for('download_pdf') }}" class="button" target="_blank">Baixar Relatório Completo em PDF</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Dashboard REA - Ouvidoria.</p>
+         <p>&copy; Powered by Setor de Inovação – Inovando Hoje para Conquistar o Amanhã.</p>
+    </footer>
+</body>
+</html>
