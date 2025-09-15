@@ -1,5 +1,8 @@
-flask
-python-dotenv
+Flask
 pandas
+requests
+python-dotenv
 plotly
+numpy
 reportlab
+gunicorn
