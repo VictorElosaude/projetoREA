@@ -1,10 +1,10 @@
 :root {
     --background-color: #e0e5ec;
     --card-color: #e0e5ec;
-    --primary-color: #2c3e50;
+    --primary-color: #494847d1;
     --text-color: #34495e;
     --light-shadow: #ffffff;
-    --dark-shadow: #a7a9ac;
+    --dark-shadow: #a9aca7;
 }
 
 body {
@@ -17,20 +17,43 @@ body {
     min-height: 100vh;
 }
 
-header, footer {
+header {
     background-color: var(--primary-color);
     color: var(--card-color);
     padding: 1rem 2rem;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .logo-container {
-    padding: 1rem;
+    padding: 0;
+    margin-left: 0;
 }
 
 .logo-container img {
     max-height: 100px;
     width: auto;
+    filter: brightness(0) invert(1);
+}
+
+header h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    font-size: 2em;
+    color: var(--card-color);
+}
+
+footer {
+    background-color: var(--primary-color);
+    color: var(--card-color);
+    padding: 1rem 2rem;
+    text-align: center;
 }
 
 .container {
@@ -98,14 +121,6 @@ header, footer {
     padding: 1rem;
 }
 
-/* Responsividade para telas menores */
-@media (max-width: 768px) {
-    .chart-section {
-        grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
-        gap: 1rem;
-    }
-}
-
 /* Estilos de gráficos do Plotly */
 .plotly-graph-div {
     overflow: hidden;
@@ -126,7 +141,7 @@ header, footer {
 }
 
 .graph-card .plotly-graph-div {
-     width: 100% !important;
+    width: 100% !important;
     height: 100% !important;
     max-height: 100%;
 }
@@ -272,4 +287,82 @@ header, footer {
     background-color: #f0f2f5;
     border-radius: 10px;
     box-shadow: inset 2px 2px 5px var(--dark-shadow), inset -2px -2px 5px var(--light-shadow);
+}
+
+/* Botões menores para edição e remoção de questões manuais */
+.button-small {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    margin-left: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.button-edit {
+    background-color: rgb(13, 175, 162);
+    color: white;
+}
+
+.button-edit:hover {
+    background-color: #067f85;
+}
+
+.button-remove {
+    background-color: #6e6b6b;
+    color: white;
+}
+
+.button-remove:hover {
+    background-color: #454444;
+}
+
+/* Botão secundário (como o limpar) */
+.button-secondary {
+    padding: 12px 24px;
+    background-color: gray;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.button-secondary:hover {
+    background-color: #555;
+}
+
+/* Lista das questões salvas */
+.questoes-salvas {
+    margin-top: 1rem;
+    list-style-type: none;
+    padding: 0;
+}
+
+.questao-item {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    header h1 {
+        position: static;
+        transform: none;
+        margin-top: 0.5rem;
+    }
+
+    .logo-container {
+        margin: 0 auto;
+    }
+
+    .chart-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
 }

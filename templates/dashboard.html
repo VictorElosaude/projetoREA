@@ -8,11 +8,14 @@
 </head>
 <body>
     <header>
+        <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Elosaúde">
+    </div>
+        
         <h1>Dashboard REA - Ouvidoria</h1>
     </header>
 
     <div class="container">
-        
         <div class="card">
             <h2>Filtro de Período</h2>
             <form class="date-filter" action="{{ url_for('dashboard') }}" method="get">
@@ -20,197 +23,164 @@
                 <input type="date" id="start_date" name="start_date" value="{{ start_date if start_date else '' }}">
                 <label for="end_date">Data de Fim:</label>
                 <input type="date" id="end_date" name="end_date" value="{{ end_date if end_date else '' }}">
-                <button type="submit">Filtrar</button>
+                <button type="submit" class="button">Filtrar</button>
             </form>
         </div>
 
         <div class="card">
             <h2>Resumo Geral</h2>
             <div class="metrics-grid">
-                
                 <div class="metric-item">
                     <h3>Total de Manifestações Próprias</h3>
                     <p>{{ relatorio['quantitativo_manifestacoes_proprias'] }}</p>
                 </div>
-
-                
                 <div class="metric-item">
                     <h3>Tempo Médio de Resposta (TMRO)</h3>
                     <p>{{ relatorio['tmro'] }} dias</p>
                 </div>
-
-                
                 <div class="metric-item">
                     <h3>Dentro do Prazo (PRDP)</h3>
                     <p>{{ relatorio['prdp'] }}%</p>
                 </div>
-
-                
                 <div class="metric-item">
                     <h3>Dentro do Prazo Pactuado (PRDPP)</h3>
                     <p>{{ relatorio['prdpp'] }}%</p>
                 </div>
-
-                
                 <div class="metric-item">
                     <h3>Fora do Prazo (PRFP)</h3>
                     <p>{{ relatorio['prfp'] }}%</p>
                 </div>
-
             </div>
         </div>
 
         <div class="card">
             <h2>Gráficos de Distribuição</h2>
             <div class="chart-section">
-                
-                <div class="graph-card">
-                    {{ div_tipos | safe }}
-                </div>
-
-                
-                <div class="graph-card">
-                    {{ div_canais | safe }}
-                </div>
-
-                
-                <div class="graph-card">
-                    {{ div_temas | safe }}
-                </div>
-
-                
-                <div class="graph-card">
-                    {{ div_vinculo | safe }}
-                </div>
-
+                <div class="graph-card">{{ div_tipos | safe }}</div>
+                <div class="graph-card">{{ div_canais | safe }}</div>
+                <div class="graph-card">{{ div_temas | safe }}</div>
+                <div class="graph-card">{{ div_vinculo | safe }}</div>
             </div>
         </div>
 
-        <!-- Adição: Nova seção de Questões Manuais -->
+        <!-- Seção de Questões Manuais -->
         <div class="card">
-    <h2>Questões Manuais</h2>
-    <div>
-        <label for="pergunta_manual" class="form-label">Selecione a Questão:</label>
-        <input list="questoes_list" id="pergunta_manual" name="pergunta_manual" class="form-control" placeholder="Digite ou selecione uma questão...">
-        <datalist id="questoes_list">
-            {% for questao in questoes_predefinidas %}
-            <option value="{{ questao }}"></option>
-            {% endfor %}
-        </datalist>
-    </div>
-    <div>
-        <label for="resposta-textarea">Resposta Manual:</label>
-        <textarea id="resposta-textarea" rows="4" class="form-control"></textarea>
-    </div>
-    <div style="display: flex; gap: 1rem; justify-content: center;">
-        <button id="salvar-btn" class="button">Salvar</button>
-        <button id="limpar-btn" style="display: inline-block; padding: 12px 24px; background-color: gray; color: white; text-decoration: none; border-radius: 20px; box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow); transition: all 0.3s;">Limpar</button>
-    </div>
-    <ul id="questoes-salvas" style="margin-top: 1rem; list-style-type: none; padding: 0;"></ul>
-</div>
+            <h2>Questões Manuais</h2>
 
-<script>
-    let questoesManuais = []; // Array temporário para armazenar questões e respostas
+            <div>
+                <label for="pergunta_manual" class="form-label">Selecione a Questão:</label>
+                <input list="questoes_list" id="pergunta_manual" name="pergunta_manual" class="form-control" placeholder="Digite ou selecione uma questão...">
+                <datalist id="questoes_list">
+                    {% for questao in questoes_predefinidas %}
+                        <option value="{{ questao }}"></option>
+                    {% endfor %}
+                </datalist>
+            </div>
 
-    document.getElementById('salvar-btn').addEventListener('click', function() {
-        // Agora pegamos o valor do input, não do select
-        const questao = document.getElementById('pergunta_manual').value;
-        const resposta = document.getElementById('resposta-textarea').value.trim();
+            <div style="margin-top:0.5rem;">
+                <label for="resposta-textarea">Resposta Manual:</label>
+                <textarea id="resposta-textarea" rows="4" class="form-control"></textarea>
+            </div>
 
-        if (questao && resposta) {
-            questoesManuais.push({
-                questao,
-                resposta
-            });
-            atualizarListaSalvas();
-            limparCampos();
-        } else {
-            alert('Selecione uma questão e insira uma resposta.');
-        }
-    });
+            <div class="questoes-botoes">
+                <button id="salvar-btn" type="button" class="button">Salvar</button>
+                <button id="limpar-btn" type="button" class="button-secondary">Limpar</button>
+            </div>
 
-    document.getElementById('limpar-btn').addEventListener('click', function() {
-        limparCampos();
-    });
+            <ul id="questoes-salvas" class="questoes-salvas"></ul>
+        </div>
 
-    function limparCampos() {
-        // Limpa o valor do input
-        document.getElementById('pergunta_manual').value = '';
-        document.getElementById('resposta-textarea').value = '';
-    }
-
-    function atualizarListaSalvas() {
-        const lista = document.getElementById('questoes-salvas');
-        lista.innerHTML = '';
-        questoesManuais.forEach((qm, idx) => {
-            const li = document.createElement('li');
-            li.textContent = `${idx + 1}) ${qm.questao}: ${qm.resposta}`;
-            li.style.marginBottom = '0.5rem';
-            lista.appendChild(li);
-        });
-    }
-
-    // Antes de submeter o form, converter o array para JSON e colocar no hidden input
-    document.getElementById('download-form').addEventListener('submit', function() {
-        document.getElementById('questoes-manuais-input').value = JSON.stringify(questoesManuais);
-    });
-</script>
-
-        <!-- Adição: Modificar o botão de download para um form POST que envia as questões manuais -->
+        <!-- Form que envia as questões manuais ao backend para gerar o PDF -->
         <form id="download-form" action="{{ url_for('download_pdf') }}" method="post">
             <input type="hidden" id="questoes-manuais-input" name="questoes_manuais" value="">
-            <button type="submit" class="button" style="display: block; text-align: center; margin: 2rem auto;">Baixar Relatório Completo em PDF</button>
+            <button type="submit" class="button" style="display:block; text-align:center; margin:2rem auto;">Baixar Relatório Completo em PDF</button>
         </form>
 
     </div>
-    
+
     <footer>
         <p>© 2025 Dashboard REA - Ouvidoria.</p>
         <p>© Powered by Setor de Inovação – Inovando Hoje para Conquistar o Amanhã.</p>
     </footer>
 
-    <!-- Adição: Script JS para gerenciar salvar, limpar e armazenar questões manuais -->
-    <script>
-        let questoesManuais = [];  // Array temporário para armazenar questões e respostas
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const salvarBtn = document.getElementById('salvar-btn');
+    const limparBtn = document.getElementById('limpar-btn');
+    const perguntaInput = document.getElementById('pergunta_manual');
+    const respostaTextarea = document.getElementById('resposta-textarea');
+    const listaSalvas = document.getElementById('questoes-salvas');
+    const downloadForm = document.getElementById('download-form');
+    const hiddenInput = document.getElementById('questoes-manuais-input');
 
-        document.getElementById('salvar-btn').addEventListener('click', function() {
-            const questao = document.getElementById('questao-select').value;
-            const resposta = document.getElementById('resposta-textarea').value.trim();
-            
-            if (questao && resposta) {
-                questoesManuais.push({ questao, resposta });
-                atualizarListaSalvas();
-                limparCampos();
-            } else {
-                alert('Selecione uma questão e insira uma resposta.');
-            }
-        });
+    let questoesManuais = [];
 
-        document.getElementById('limpar-btn').addEventListener('click', function() {
-            limparCampos();
-        });
+    function atualizarListaSalvas() {
+        listaSalvas.innerHTML = '';
+        questoesManuais.forEach((qm, idx) => {
+            const li = document.createElement('li');
+            li.classList.add('questao-item');
+            li.textContent = `${qm.questao}: ${qm.resposta}`;
 
-        function limparCampos() {
-            document.getElementById('questao-select').value = '';
-            document.getElementById('resposta-textarea').value = '';
-        }
-
-        function atualizarListaSalvas() {
-            const lista = document.getElementById('questoes-salvas');
-            lista.innerHTML = '';
-            questoesManuais.forEach((qm, idx) => {
-                const li = document.createElement('li');
-                li.textContent = `${idx + 1}) ${qm.questao}: ${qm.resposta}`;
-                li.style.marginBottom = '0.5rem';
-                lista.appendChild(li);
+            // Botão editar
+            const btnEditar = document.createElement('button');
+            btnEditar.type = 'button';
+            btnEditar.textContent = 'Editar';
+            btnEditar.classList.add('button-small', 'button-edit');
+            btnEditar.addEventListener('click', () => {
+                perguntaInput.value = qm.questao;
+                respostaTextarea.value = qm.resposta;
             });
+
+            // Botão remover
+            const btnRemover = document.createElement('button');
+            btnRemover.type = 'button';
+            btnRemover.textContent = 'Remover';
+            btnRemover.classList.add('button-small', 'button-remove');
+            btnRemover.addEventListener('click', () => {
+                questoesManuais.splice(idx, 1);
+                atualizarListaSalvas();
+            });
+
+            li.appendChild(btnEditar);
+            li.appendChild(btnRemover);
+            listaSalvas.appendChild(li);
+        });
+    }
+
+    function limparCampos() {
+        perguntaInput.value = '';
+        respostaTextarea.value = '';
+    }
+
+    salvarBtn.addEventListener('click', function () {
+        const questao = perguntaInput.value.trim();
+        const resposta = respostaTextarea.value.trim();
+        if (!questao || !resposta) {
+            alert('Selecione/insira uma questão e digite uma resposta.');
+            return;
         }
 
-        // Antes de submeter o form, converter o array para JSON e colocar no hidden input
-        document.getElementById('download-form').addEventListener('submit', function() {
-            document.getElementById('questoes-manuais-input').value = JSON.stringify(questoesManuais);
-        });
-    </script>
-    
+        const idxExistente = questoesManuais.findIndex(qm => qm.questao === questao);
+        if (idxExistente !== -1) {
+            questoesManuais[idxExistente].resposta = resposta;
+        } else {
+            questoesManuais.push({ questao, resposta });
+        }
+
+        atualizarListaSalvas();
+        limparCampos();
+    });
+
+    limparBtn.addEventListener('click', function () {
+        limparCampos();
+    });
+
+    downloadForm.addEventListener('submit', function () {
+        hiddenInput.value = JSON.stringify(questoesManuais);
+    });
+});
+</script>
+
 </body>
 </html>
