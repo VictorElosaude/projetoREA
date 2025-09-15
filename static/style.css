@@ -263,3 +263,13 @@ header, footer {
     height: 100% !important;
 }
 
+/* Estilo para o input de questões manuais */
+.card .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: none;
+    background-color: #f0f2f5;
+    border-radius: 10px;
+    box-shadow: inset 2px 2px 5px var(--dark-shadow), inset -2px -2px 5px var(--light-shadow);
+}
