@@ -63,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Seção de Questões Manuais -->
         <div class="card">
             <h2>Questões Manuais</h2>
 
@@ -90,11 +89,13 @@
             <ul id="questoes-salvas" class="questoes-salvas"></ul>
         </div>
 
-        <!-- Form que envia as questões manuais ao backend para gerar o PDF -->
-        <form id="download-form" action="{{ url_for('download_pdf') }}" method="post">
-            <input type="hidden" id="questoes-manuais-input" name="questoes_manuais" value="">
-            <button type="submit" class="button" style="display:block; text-align:center; margin:2rem auto;">Baixar Relatório Completo em PDF</button>
-        </form>
+        <div class="report-buttons">
+            <form id="download-form" action="{{ url_for('download_pdf') }}" method="post">
+                <input type="hidden" id="questoes-manuais-input" name="questoes_manuais" value="">
+                <button type="submit" class="button">Baixar Relatório Completo em PDF</button>
+            </form>
+            <a href="{{ url_for('logout') }}" class="button logout-button">Sair</a>
+        </div>
 
     </div>
 
@@ -179,6 +180,26 @@ document.addEventListener('DOMContentLoaded', function () {
     downloadForm.addEventListener('submit', function () {
         hiddenInput.value = JSON.stringify(questoesManuais);
     });
+
+    // Código para Logout Automático
+    const tempoInatividade = 30 * 60 * 1000;
+    let temporizador;
+
+    function resetTemporizador() {
+        clearTimeout(temporizador);
+        temporizador = setTimeout(logoutAutomatico, tempoInatividade);
+    }
+
+    function logoutAutomatico() {
+        window.location.href = "{{ url_for('logout') }}";
+    }
+
+    window.onload = resetTemporizador;
+    window.onmousemove = resetTemporizador;
+    window.onmousedown = resetTemporizador;
+    window.onclick = resetTemporizador;
+    window.onkeydown = resetTemporizador;
+    window.onscroll = resetTemporizador;
 });
 </script>
 

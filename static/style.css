@@ -344,6 +344,24 @@ footer {
     margin-bottom: 0.5rem;
 }
 
+/* Contêiner para os botões de relatório e logout */
+.report-buttons {
+    display: flex;
+    justify-content: center; /* Centraliza os botões no contêiner */
+    align-items: center;
+    gap: 20px; /* Adiciona um espaço de 20px entre os botões */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Estiliza o botão de logout para o novo local */
+.logout-button {
+    background-color: rgb(13, 175, 162);
+}
+.logout-button:hover {
+    background-color: #c82333;
+}
+
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
     header {

@@ -385,13 +385,22 @@ def login():
         if username == USERNAME and password == PASSWORD:
             ip_address = request.remote_addr
             log_access(username, ip_address)
+            session['logged_in'] = True
             return redirect(url_for("dashboard"))
         else:
             return render_template("login.html", error="Credenciais inválidas.")
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
 @app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+        
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')
     start_date = pd.to_datetime(start_date_str) if start_date_str else None
@@ -565,6 +574,9 @@ def dashboard():
 
 @app.route("/download-pdf", methods=['GET', 'POST'])
 def download_pdf():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
     data = get_data_from_url()
     relatorio = process_data(data)
     if relatorio is None:
